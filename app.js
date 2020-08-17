@@ -57,6 +57,36 @@ const buildManager = employee =>{
     .catch(err => console.log(err))
 }
 
+const subMenu = () => {
+    prompt({
+        type: 'list',
+        name:'action',
+        choices: ['Make an employee file' , 'Finish' ],
+        message: 'What would you like to do?'
+    })
+    .then(({ action }) => {
+        switch (action) {
+          case 'Make Another Product':
+            mainMenu()
+            break
+          case 'Finish':
+            const html = render(products)
+            fs.writeFileSync(path.join(__dirname, 'output', 'index.html'), html)
+            break
+        }
+      })
+      .catch(err => console.log(err))
+}
+
+const mainMenu = () => {
+    prompt([
+        {
+            type: 'list',
+            
+        }
+    ])
+}
+
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)

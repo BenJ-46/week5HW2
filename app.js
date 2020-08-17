@@ -1,7 +1,7 @@
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-const inquirer = require("inquirer");
+const {prompt} = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 
@@ -10,18 +10,18 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-let employee = []
+let employees = []
 
 const buildEngineer = employee => {
     prompt([
         {
             type: 'input',
-            name: 'githhub',
+            name: 'github',
             message: 'Enter your Github username'
         },
     ])
     .then (({github})=>{
-        employee.push( new Engineer(employee.name, employee.role, employee.email, employee.id, github))
+        employees.push( new Engineer(employee.name, employee.email, employee.id, github))
         subMenu()
     })
     .catch(err => console.log (err))
@@ -36,7 +36,7 @@ const buildIntern = employee =>{
         }
     ])
     .then (({school})=>{
-        employee.push (new Intern(employee.name, employee.role, employee.email, employee.id, school))
+        employees.push (new Intern(employee.name, employee.email, employee.id, school))
         subMenu()
     })
     .catch(err => console.log (err))
@@ -51,7 +51,7 @@ const buildManager = employee =>{
         }
     ])
     .then (({officenum})=>{
-        employee.push (new Manager (employee.name, employee.role, employee.email, employe.id, officenum))
+        employees.push (new Manager (employee.name, employee.email, employee.id, officenum))
         subMenu()
     })
     .catch(err => console.log(err))
@@ -61,17 +61,17 @@ const subMenu = () => {
     prompt({
         type: 'list',
         name:'action',
-        choices: ['Make an employee file' , 'Finish' ],
+        choices: ['Make Another Employee' , 'Finish' ],
         message: 'What would you like to do?'
     })
     .then(({ action }) => {
         switch (action) {
-          case 'Make Another Product':
+          case 'Make Another Employee':
             mainMenu()
             break
           case 'Finish':
-            const html = render(products)
-            fs.writeFileSync(path.join(__dirname, 'output', 'index.html'), html)
+            const html = render(employees)
+            fs.writeFileSync(outputPath, html)
             break
         }
       })
@@ -82,10 +82,42 @@ const mainMenu = () => {
     prompt([
         {
             type: 'list',
-            
+            name: 'type',
+            choices: ['Engineer', 'Intern', 'Manager'],
+            message: 'Select the type of employee'
+        },
+        {
+            type: 'input',
+            name: 'name',
+            message: 'Enter employee name'
+        },
+        {
+            type: 'input',
+            name: 'email',
+            message: 'enter employee email'
+        },
+        {
+            type: 'input',
+            name: "id",
+            message: "enter employee ID number"
         }
     ])
+    .then(employee => {
+        switch (employee.type) {
+            case 'Engineer':
+                buildEngineer(employee)
+                break
+            case 'Intern':
+                buildIntern(employee)
+                break
+            case 'Manager':
+                buildManager(employee)  
+        }
+    })
+    .catch(err => console.log(err))
 }
+
+mainMenu()
 
 
 // Write code to use inquirer to gather information about the development team members,
